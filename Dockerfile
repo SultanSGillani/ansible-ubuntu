@@ -70,5 +70,5 @@ ENV TERM xterm
 ENV ANSIBLE_CONFIG /etc/ansible/roles/roles_to_test/tests/ansible.cfg
 
 VOLUME ["/sys/fs/cgroup", "/tmp", "/run"]
-# default command: display Ansible version
-CMD [ "ansible-playbook", "--version" ]
+
+CMD ["bash"]
