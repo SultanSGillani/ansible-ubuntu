@@ -14,7 +14,7 @@ RUN apt-get update  &&  apt-get install -y --no-install-recommends gnupg2 \
        aptitude \
        software-properties-common \
        rsyslog systemd systemd-cron sudo \
-    && ln -s /usr/bin/python3 python \
+    && ln -s /usr/bin/python3 /usr/bin/python \
     && pip3 install --upgrade pip setuptools \
     && rm -Rf /var/lib/apt/lists/* \
     && rm -Rf /usr/share/doc && rm -Rf /usr/share/man \
