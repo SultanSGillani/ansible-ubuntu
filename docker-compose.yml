@@ -1,0 +1,10 @@
+version: '3.7'
+
+services:
+  ansible-ubuntu:
+    image: registry.gitlab.com/sultangillani/ansible-docker-ubuntu:latest
+    build:
+      context: .
+    stdin_open: true
+    tty: true
+    container_name: ansible-ubuntu
