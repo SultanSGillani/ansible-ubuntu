@@ -5,11 +5,13 @@ services:
 stages:
  - linting
  - build_and_push
+ - build_hub
 variables:
   DOCKER_DRIVER: overlay2
   PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache"
   LATEST_TAG: latest
   UBUNTU_CONTAINER_RELEASE_IMAGE: $CI_REGISTRY_IMAGE
+  HUB_RELEASE_IMAGE: docker.io/saltman33/ansible-ubuntu-bionic
 cache:
   paths:
     - .cache/
@@ -36,3 +38,15 @@ build_dockerfiles:
     - echo "$CONTAINER_COMMIT_IMAGE"
     - docker build --pull -t $UBUNTU_CONTAINER_RELEASE_IMAGE .
     - docker push $UBUNTU_CONTAINER_RELEASE_IMAGE:$LATEST_TAG
+build_dockerfiles:
+  variables:
+    DOCKER_DRIVER: overlay2
+  stage: build_hub
+  cache: {}
+  before_script:
+      - docker-compose --version
+      - docker version
+      - "docker login -u $HUB_USER -p $HUB_PW"
+  script:
+    - docker build --pull -t $HUB_RELEASE_IMAGE .
+    - docker push $HUB_RELEASE_IMAGE:$LATEST_TAG
