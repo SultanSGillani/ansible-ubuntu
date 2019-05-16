@@ -25,7 +25,7 @@ dockerfile_lint:
       - hadolint --version
    script:
       - hadolint --config .hadolint.yaml ./Dockerfile
-build_dockerfiles:
+build_docker_gitlab:
   variables:
     DOCKER_DRIVER: overlay2
   stage: build_and_push
@@ -38,14 +38,12 @@ build_dockerfiles:
     - echo "$CONTAINER_COMMIT_IMAGE"
     - docker build --pull -t $UBUNTU_CONTAINER_RELEASE_IMAGE .
     - docker push $UBUNTU_CONTAINER_RELEASE_IMAGE:$LATEST_TAG
-build_dockerfiles:
+build_docker_hub:
   variables:
     DOCKER_DRIVER: overlay2
   stage: build_hub
   cache: {}
   before_script:
-      - docker-compose --version
-      - docker version
       - "docker login -u $HUB_USER -p $HUB_PW"
   script:
     - docker build --pull -t $HUB_RELEASE_IMAGE .
