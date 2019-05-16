@@ -1,5 +1,5 @@
 ---
-image: tmaier/docker-compose:latest
+image: docker:stable
 services:
  - docker:dind
 stages:
@@ -21,26 +21,17 @@ cache:
 dockerfile_lint:
    <<: *linting
    image: hadolint/hadolint:latest-debian
-   before_script:
-      - hadolint --version
    script:
       - hadolint --config .hadolint.yaml ./Dockerfile
 build_docker_gitlab:
-  variables:
-    DOCKER_DRIVER: overlay2
   stage: build_and_push
   cache: {}
   before_script:
-      - docker-compose --version
-      - docker version
       - "docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $CI_REGISTRY"
   script:
-    - echo "$CONTAINER_COMMIT_IMAGE"
     - docker build --pull -t $UBUNTU_CONTAINER_RELEASE_IMAGE .
     - docker push $UBUNTU_CONTAINER_RELEASE_IMAGE:$LATEST_TAG
 build_docker_hub:
-  variables:
-    DOCKER_DRIVER: overlay2
   stage: build_hub
   cache: {}
   before_script:
