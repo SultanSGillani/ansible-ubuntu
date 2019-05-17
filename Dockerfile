@@ -8,7 +8,8 @@ ENV DEBIAN_FRONTEND noninteractive
 WORKDIR /usr/local/bin
 
 # Install dependencies.
-RUN apt-get update &&  apt-get install -y --no-install-recommends gnupg2 \
+RUN apt-get update && apt-get install -y --no-install-recommends \
+       gnupg2 \
        python3-pip \
        python3-dev \
        build-essential \
@@ -23,7 +24,7 @@ RUN apt-get update &&  apt-get install -y --no-install-recommends gnupg2 \
     && pip3 install --upgrade pip setuptools \
     && rm -Rf /var/lib/apt/lists/* \
     && rm -Rf /usr/share/doc && rm -Rf /usr/share/man \
-    && && rm -Rf /var/lib/apt/lists/*
+    && rm -Rf /var/lib/apt/lists/*
 
 RUN sed -i 's/^\($ModLoad imklog\)/#\1/' /etc/rsyslog.conf
 
