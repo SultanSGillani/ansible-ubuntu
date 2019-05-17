@@ -25,7 +25,6 @@ dockerfile_lint:
       - hadolint --config .hadolint.yaml ./Dockerfile
 build_docker_gitlab:
   stage: build_and_push
-  cache: {}
   before_script:
       - "docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $CI_REGISTRY"
   script:
@@ -33,7 +32,6 @@ build_docker_gitlab:
     - docker push $UBUNTU_CONTAINER_RELEASE_IMAGE:$LATEST_TAG
 build_docker_hub:
   stage: build_hub
-  cache: {}
   before_script:
       - "docker login -u $HUB_USER -p $HUB_PW"
   script:
