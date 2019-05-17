@@ -5,6 +5,9 @@ services:
     image: registry.gitlab.com/sultangillani/ansible-docker-ubuntu:latest
     build:
       context: .
+      cache_from:
+        - registry.gitlab.com/sultangillani/ansible-docker-ubuntu:latest
+        - docker.io/saltman33/ansible-ubuntu-bionic
     stdin_open: true
     tty: true
     container_name: ansible-ubuntu
