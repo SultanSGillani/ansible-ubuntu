@@ -54,11 +54,21 @@ RUN useradd -ms /bin/bash ansible \
     && chown -R ansible:ansible /etc/ansible \
     && printf "ansible ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
 
-WORKDIR /etc/ansible/roles/roles_to_test/tests
+WORKDIR /etc/ansible/roles/roles_to_test
 
 USER ansible
-ENV TERM xterm
-ENV ANSIBLE_CONFIG /etc/ansible/roles/roles_to_test/tests/ansible.cfg
+ENV ANSIBLE_LIBRARY=${ANSIBLE_LIBRARY} \
+    ANSIBLE_VERBOSITY=${ANSIBLE_VERBOSITY} \
+    ANSIBLE_ROLES_PATH=${ANSIBLE_ROLES_PATH} \
+    ANSIBLE_HOST_KEY_CHECKING=${ANSIBLE_HOST_KEY_CHECKING} \
+    ANSIBLE_LOG_PATH=${ANSIBLE_LOG_PATH} \
+    ANSIBLE_EXECUTABLE=${ANSIBLE_EXECUTABLE} \
+    ANSIBLE_BECOME=${ANSIBLE_BECOME} \
+    ANSIBLE_BECOME_USER=${ANSIBLE_BECOME_USER} \
+    ANSIBLE_PIPELINING=${ANSIBLE_PIPELINING} \
+    ANSIBLE_INVENTORY=${ANSIBLE_INVENTORY} \
+    ANSIBLE_INVENTORY_ENABLED=${ANSIBLE_INVENTORY_ENABLED} \
+    TTY=${TTY}
 
 VOLUME ["/sys/fs/cgroup", "/tmp", "/run"]
 
