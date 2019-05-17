@@ -10,7 +10,7 @@ WORKDIR /usr/local/bin
 # Install dependencies.
 RUN apt-get update &&  apt-get install -y --no-install-recommends \
        gnupg2 \
-       python3-pip 
+       python3-pip \
        python3-dev \
        build-essential \
        aptitude \
