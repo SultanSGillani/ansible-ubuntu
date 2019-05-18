@@ -46,9 +46,15 @@ RUN pip install $pip_packages
 
 COPY ansible-playbook-wrapper /usr/local/bin/
 
-# Install Ansible inventory file.
-RUN mkdir -p /etc/ansible
-RUN printf "[local]\nlocalhost ansible_connection=local" > /etc/ansible/hosts
+RUN addgroup -S ansible \
+    && useradd -rm -d /etc/ansible -s /bin/bash -g ansible ansible  \
+    && chown -R ansible:ansible /etc/ansible \
+    && printf "[local]\nlocalhost ansible_connection=local" > /etc/ansible/hosts \
+    && printf "ansible ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
+
+USER ansible
+
+RUN mkdir -p /etc/ansible/roles
 
 WORKDIR /etc/ansible/roles/roles_to_test
 
@@ -65,6 +71,6 @@ ENV ANSIBLE_LIBRARY=${ANSIBLE_LIBRARY} \
     ANSIBLE_INVENTORY_ENABLED=${ANSIBLE_INVENTORY_ENABLED} \
     TTY=${TTY}
 
-VOLUME ["/sys/fs/cgroup", "/etc/ansible/roles/roles_to_test", "/run"]
+VOLUME ["/sys/fs/cgroup", "/etc/ansible/roles/roles_to_test", "/tmp"]
 
 CMD ["bash"]
