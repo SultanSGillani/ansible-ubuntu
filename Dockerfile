@@ -46,8 +46,7 @@ RUN pip install $pip_packages
 
 COPY ansible-playbook-wrapper /usr/local/bin/
 
-RUN addgroup -S ansible \
-    && useradd -rm -d /etc/ansible --shell /bin/bash -g ansible ansible  \
+RUN useradd -rm -d /etc/ansible --shell /bin/bash ansible \
     && chown -R ansible:ansible /etc/ansible \
     && printf "[local]\nlocalhost ansible_connection=local" > /etc/ansible/hosts \
     && printf "ansible ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
