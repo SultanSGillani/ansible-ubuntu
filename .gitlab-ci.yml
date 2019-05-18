@@ -41,7 +41,9 @@ build_docker_gitlab:
       - "docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $CI_REGISTRY"
   script:
     - docker build --pull -t $UBUNTU_CONTAINER_RELEASE_IMAGE .
+    - docker build --cache-from $CI_REGISTRY_IMAGE:latest --tag $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA --tag $CI_REGISTRY_IMAGE:latest .
     - docker push $UBUNTU_CONTAINER_RELEASE_IMAGE:$LATEST_TAG
+    - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
 build_docker_hub:
   stage: build_hub
   before_script:
