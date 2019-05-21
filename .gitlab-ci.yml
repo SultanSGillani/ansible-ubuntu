@@ -5,6 +5,7 @@ services:
 stages:
  - linting
  - build_and_push
+ - report
  - build_hub
 variables:
   DOCKER_DRIVER: overlay2
@@ -28,10 +29,14 @@ build_docker_gitlab:
       - "docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $CI_REGISTRY"
   script:
     - docker pull $CONTAINER_IMAGE:latest
-    - docker build --cache-from $CONTAINER_IMAGE:latest -t $CONTAINER_IMAGE:$CI_COMMIT_SHA -t $CONTAINER_IMAGE:$CI_BUILD_REF -t $CONTAINER_IMAGE:latest .
+    - docker build --cache-from $CONTAINER_IMAGE:latest --build-arg=token=${MICRO_TOKEN} -t $CONTAINER_IMAGE:$CI_COMMIT_SHA -t $CONTAINER_IMAGE:$CI_BUILD_REF -t $CONTAINER_IMAGE:19.04 -t $CONTAINER_IMAGE:latest .
     - docker push $CONTAINER_IMAGE:$CI_BUILD_REF
     - docker push $CONTAINER_IMAGE:latest
     - docker push $CONTAINER_IMAGE:$CI_COMMIT_SHA
+  artifacts:
+    name: "vscan.html"
+    paths:
+      - "/etc/ansible/roles/roles_to_test"
 build_docker_hub:
   stage: build_hub
   before_script:
@@ -42,3 +47,10 @@ build_docker_hub:
     - docker push $HUB_RELEASE_IMAGE:$CI_BUILD_REF
     - docker push $HUB_RELEASE_IMAGE:latest
     - docker push $HUB_RELEASE_IMAGE:$CI_COMMIT_SHA
+pages:
+  stage: report
+  script:
+    - mv /etc/ansible/roles/roles_to_test/vscan.html public/vscan.html
+  artifacts:
+    paths:
+      - public

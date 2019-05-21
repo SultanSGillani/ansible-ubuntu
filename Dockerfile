@@ -1,5 +1,7 @@
-FROM ubuntu:18.04
+FROM ubuntu:19.04
 LABEL maintainer="Sultan Gillani (sultangillani)"
+
+ARG token
 
 ENV pip_packages "ansible yamllint ansible-lint"
 
@@ -19,7 +21,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
        systemd \
        systemd-cron \
        sudo \
-       openssl ca-certificates \
+       openssl \ 
+       ca-certificates \
+       wget \
     && ln -s /usr/bin/python3 /usr/bin/python \
     && pip3 install --upgrade pip setuptools \
     && rm -Rf /var/lib/apt/lists/* \
@@ -46,14 +50,20 @@ RUN pip install $pip_packages
 
 COPY ansible-playbook-wrapper /usr/local/bin/
 
+ARG token
 RUN useradd -rm -d /etc/ansible --shell /bin/bash ansible \
     && chown -R ansible:ansible /etc/ansible \
     && printf "[local]\nlocalhost ansible_connection=local" > /etc/ansible/hosts \
-    && printf "ansible ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
+    && printf "ansible ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers \
+    && chown ansible:ansible -R /etc/ansible
 
 USER ansible
 
-RUN mkdir -p /etc/ansible/roles
+RUN mkdir -p /etc/ansible/roles/roles_to_test \
+    && wget -O ~/microscanner https://get.aquasec.com/microscanner \
+    && chmod +x ~/microscanner \
+    && ~/microscanner ${token} --html >~/roles/roles_to_test/vscan.html \
+    && rm -rf ~/microscanner
 
 WORKDIR /etc/ansible/roles/roles_to_test
 
