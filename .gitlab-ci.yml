@@ -5,11 +5,7 @@ services:
 stages:
  - linting
  - build_and_push
- - get_artifacts
  - build_hub
- - report
-before_script:
-  - "docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $CI_REGISTRY"
 variables:
   DOCKER_DRIVER: overlay2
   PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache"
@@ -28,21 +24,14 @@ dockerfile_lint:
       - hadolint --config .hadolint.yaml ./Dockerfile
 build_docker_gitlab:
   stage: build_and_push
+  before_script:
+      - "docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $CI_REGISTRY"
   script:
     - docker pull $CONTAINER_IMAGE:latest
-    - docker build --cache-from $CONTAINER_IMAGE:latest --build-arg=token=${MICRO_TOKEN} -t $CONTAINER_IMAGE:$CI_COMMIT_SHA -t $CONTAINER_IMAGE:$CI_BUILD_REF -t $CONTAINER_IMAGE:19.04 -t $CONTAINER_IMAGE:latest .
+    - docker build --cache-from $CONTAINER_IMAGE:latest -t $CONTAINER_IMAGE:$CI_COMMIT_SHA -t $CONTAINER_IMAGE:$CI_BUILD_REF -t $CONTAINER_IMAGE:latest .
     - docker push $CONTAINER_IMAGE:$CI_BUILD_REF
     - docker push $CONTAINER_IMAGE:latest
     - docker push $CONTAINER_IMAGE:$CI_COMMIT_SHA
-get_reports:
-  stage: get_artifacts
-  image: tmaier/docker-compose:latest
-  script:
-    - docker-compose build --build-arg=token=$MICRO_TOKEN
-    - docker-compose up -d
-  artifacts:
-    paths:
-      - "/tmp/vscan.html"
 build_docker_hub:
   stage: build_hub
   before_script:
@@ -53,10 +42,3 @@ build_docker_hub:
     - docker push $HUB_RELEASE_IMAGE:$CI_BUILD_REF
     - docker push $HUB_RELEASE_IMAGE:latest
     - docker push $HUB_RELEASE_IMAGE:$CI_COMMIT_SHA
-pages:
-  stage: report
-  script:
-    - mv /tmp/vscan.html public/vscan.html
-  artifacts:
-    paths:
-      - public

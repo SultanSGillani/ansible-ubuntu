@@ -12,5 +12,3 @@ services:
     stdin_open: true
     tty: true
     container_name: ansible-ubuntu
-    volumes:
-      - /tmp:/tmp
