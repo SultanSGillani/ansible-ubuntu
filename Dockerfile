@@ -62,7 +62,7 @@ USER ansible
 RUN mkdir -p /etc/ansible/roles/roles_to_test \
     && wget -O ~/microscanner https://get.aquasec.com/microscanner \
     && chmod +x ~/microscanner \
-    && ~/microscanner ${token} --html >~/roles/roles_to_test/vscan.html \
+    && ~/microscanner ${token} --html >/tmp/vscan.html \
     && rm -rf ~/microscanner
 
 WORKDIR /etc/ansible/roles/roles_to_test
