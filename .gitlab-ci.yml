@@ -5,8 +5,8 @@ services:
 stages:
  - linting
  - build_and_push
- - report
  - build_hub
+ - report
 variables:
   DOCKER_DRIVER: overlay2
   PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache"
