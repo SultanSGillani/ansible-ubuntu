@@ -10,7 +10,7 @@ variables:
   DOCKER_DRIVER: overlay2
   PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache"
   CONTAINER_IMAGE: registry.gitlab.com/$CI_PROJECT_PATH
-HUB_TEST_IMAGE: docker.io/saltman33/ansible-ubuntu-bionic
+  HUB_TEST_IMAGE: docker.io/saltman33/ansible-ubuntu-bionic
   HUB_RELEASE_IMAGE: docker.io/saltman33/ansible-ubuntu-disco
 cache:
   paths:
