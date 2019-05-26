@@ -1,4 +1,5 @@
-FROM ubuntu:19.04
+FROM ubuntu:$VER
+
 LABEL maintainer="Sultan Gillani (sultangillani)"
 
 ENV pip_packages "ansible yamllint ansible-lint"
