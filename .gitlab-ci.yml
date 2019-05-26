@@ -34,7 +34,7 @@ build_docker_gitlab:
   before_script:
       - "docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $CI_REGISTRY"
   script:
-    - docker build --pull -t $CONTAINER_RELEASE_IMAGE .
+    - docker pull $CONTAINER_RELEASE_IMAGE
     - docker build --cache-from $CONTAINER_RELEASE_IMAGE -t $CONTAINER_BIONIC_IMAGE --build-arg VER=$BIONIC_TAG .
     - docker build --cache-from $CONTAINER_RELEASE_IMAGE -t $CONTAINER_DISCO_IMAGE --build-arg VER=$DISCO_TAG .
     - docker push $CONTAINER_BIONIC_IMAGE
