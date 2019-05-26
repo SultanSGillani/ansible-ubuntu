@@ -1,6 +1,6 @@
-FROM ubuntu:$VER
+ARG VER
 
-ARG VER=$VER
+FROM ubuntu:$VER
 
 LABEL maintainer="Sultan Gillani (sultangillani)"
 

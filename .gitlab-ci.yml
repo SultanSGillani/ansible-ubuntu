@@ -13,7 +13,9 @@ variables:
   BIONIC_TAG: bionic
   DISCO_TAG: disco
   CONTAINER_TEST_IMAGE: $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
-  CONTAINER_RELEASE_IMAGE: $CI_REGISTRY_IMAGE:latest
+  CONTAINER_RELEASE_IMAGE: $CI_REGISTRY_IMAGE:$LATEST_TAG
+  CONTAINER_BIONIC_IMAGE: $CI_REGISTRY_IMAGE:$BIONIC_TAG
+  CONTAINER_DISCO_IMAGE: $CI_REGISTRY_IMAGE:$DISCO_TAG
   HUB_TEST_IMAGE: docker.io/saltman33/ansible-ubuntu-disco
   HUB_RELEASE_IMAGE: docker.io/saltman33/ansible-ubuntu
 cache:
@@ -32,11 +34,12 @@ build_docker_gitlab:
   before_script:
       - "docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $CI_REGISTRY"
   script:
-    - docker pull $CONTAINER_RELEASE_IMAGE
-    - docker build --cache-from $CONTAINER_RELEASE_IMAGE --build-arg VER=$BIONIC_TAG -t $CONTAINER_RELEASE_IMAGE:$BIONIC_TAG --build-arg VER=$DISCO_TAG -t $CONTAINER_RELEASE_IMAGE:$DISCO_TAG -t $CONTAINER_RELEASE_IMAGE:$LATEST_TAG .
-    - docker push $CONTAINER_RELEASE_IMAGE:$BIONIC_TAG
-    - docker push $CONTAINER_RELEASE_IMAGE:$LATEST_TAG
-    - docker push $CONTAINER_RELEASE_IMAGE:$DISCO_TAG
+    - docker build pull -t $CONTAINER_RELEASE_IMAGE .
+    - docker build --cache-from $CONTAINER_RELEASE_IMAGE -t $CONTAINER_BIONIC_IMAGE --build-arg VER=$BIONIC_TAG .
+    - docker build --cache-from $CONTAINER_RELEASE_IMAGE -t $CONTAINER_DISCO_IMAGE --build-arg VER=$DISCO_TAG .
+    - docker push $CONTAINER_BIONIC_IMAGE
+    - docker push $CONTAINER_RELEASE_IMAGE
+    - docker push $CONTAINER_DISCO_IMAGE
 build_docker_hub:
   stage: build_hub
   before_script:
