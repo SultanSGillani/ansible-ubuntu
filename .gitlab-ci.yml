@@ -17,7 +17,10 @@ variables:
   CONTAINER_BIONIC_IMAGE: $CI_REGISTRY_IMAGE:$BIONIC_TAG
   CONTAINER_DISCO_IMAGE: $CI_REGISTRY_IMAGE:$DISCO_TAG
   HUB_TEST_IMAGE: docker.io/saltman33/ansible-ubuntu-disco
-  HUB_RELEASE_IMAGE: docker.io/saltman33/ansible-ubuntu
+  HUB_NEW_IMAGE: docker.io/saltman33/ansible-ubuntu
+  HUB_RELEASE_IMAGE: $HUB_NEW_IMAGE:$LATEST_TAG
+  HUB_BIONIC_IMAGE: $HUB_NEW_IMAGE:$BIONIC_TAG
+  HUB_DISCO_IMAGE: $HUB_NEW_IMAGE:$DISCO_TAG
 cache:
   paths:
     - .cache/
@@ -46,7 +49,9 @@ build_docker_hub:
       - "docker login -u $HUB_USER -p $HUB_PW"
   script:
     - docker pull $HUB_TEST_IMAGE
-    - docker build --cache-from $HUB_RELEASE_IMAGE --build-arg VER=$BIONIC_TAG -t $HUB_RELEASE_IMAGE:$BIONIC_TAG --build-arg VER=$DISCO_TAG -t $HUB_RELEASE_IMAGE:$DISCO_TAG -t $HUB_RELEASE_IMAGE:$LATEST_TAG .
-    - docker push $HUB_RELEASE_IMAGE:$BIONIC_TAG
-    - docker push $HUB_RELEASE_IMAGE:$LATEST_TAG
-    - docker push $HUB_RELEASE_IMAGE:$DISCO_TAG
+    - docker build --cache-from $HUB_TEST_IMAGE -t $HUB_BIONIC_IMAGE --build-arg VER=$BIONIC_TAG .
+    - docker build --cache-from $HUB_TEST_IMAGE -t $HUB_DISCO_IMAGE --build-arg VER=$DISCO_TAG .
+    - docker build --cache-from $HUB_TEST_IMAGE -t $HUB_RELEASE_IMAGE --build-arg VER=$DISCO_TAG .
+    - docker push $HUB_RELEASE_IMAGE
+    - docker push $HUB_BIONIC_IMAGE
+    - docker push $HUB_DISCO_IMAGE
